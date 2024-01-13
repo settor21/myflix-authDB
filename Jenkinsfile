@@ -31,7 +31,7 @@ pipeline {
             }
         }
 
-        stage('Dockerize Application') {
+        stage('Dockerize DB Application') {
             steps {
                 script {
                     sh "ssh -o StrictHostKeyChecking=no ${PROD_USERNAME}@${PROD_SERVER} 'cd myflix/auth-db && docker build -t ${DOCKER_IMAGE_NAME} .'"
@@ -40,7 +40,7 @@ pipeline {
             }
         }
 
-        stage('Redeploy Container to Web') {
+        stage('Redeploy Container') {
             steps {
                 script {
                     sh "ssh -o StrictHostKeyChecking=no ${PROD_USERNAME}@${PROD_SERVER} 'cd myflix/auth-db && docker ps -q --filter name=${DOCKER_CONTAINER_NAME} | xargs -r docker stop'"
