@@ -128,7 +128,7 @@ def add_session():
         connection.commit()
 
     return jsonify({'message': 'Session added successfully'})
-
+ 
 if __name__ == '__main__':
-    create_tables()
+    create_tables() #creates table first
     app.run(host = "0.0.0.0",debug=True, port=6000)
