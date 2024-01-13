@@ -43,10 +43,10 @@ pipeline {
         stage('Redeploy Container') {
             steps {
                 script {
-                    sh "ssh -o StrictHostKeyChecking=no ${PROD_USERNAME}@${PROD_SERVER} 'cd myflix/auth-db && docker ps -q --filter name=${DOCKER_CONTAINER_NAME} | xargs -r docker stop'"
-                    sh "ssh -o StrictHostKeyChecking=no ${PROD_USERNAME}@${PROD_SERVER} 'cd myflix/auth-db && docker ps -q --filter name=${DOCKER_CONTAINER_NAME} | xargs -r docker rm'"
-
+                    sh "ssh -o StrictHostKeyChecking=no ${PROD_USERNAME}@${PROD_SERVER} 'cd myflix/auth-db && docker stop ${DOCKER_CONTAINER_NAME} || true'"
+                    sh "ssh -o StrictHostKeyChecking=no ${PROD_USERNAME}@${PROD_SERVER} 'cd myflix/auth-db && docker rm ${DOCKER_CONTAINER_NAME} || true'"
                     sh "echo Container stopped and removed. Preparing to redeploy new version"
+
                     sh "ssh -o StrictHostKeyChecking=no ${PROD_USERNAME}@${PROD_SERVER} 'cd myflix/auth-db && docker run -d -p ${DOCKER_HOST_PORT}:${DOCKER_CONTAINER_PORT} --name ${DOCKER_CONTAINER_NAME} ${DOCKER_IMAGE_NAME}'"
                     sh "echo authDB Microservice Deployed!"
                 }
