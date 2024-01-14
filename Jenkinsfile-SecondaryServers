@@ -17,7 +17,7 @@ pipeline {
             }
         }
 
-        stage('Deploy Repo to Servers') {
+        stage('Deploy Repo to Secondary Servers') {
             steps {
                 script {
                     SERVER_IPS.each { SERVER_IP ->
@@ -31,7 +31,7 @@ pipeline {
             }
         }
 
-        stage('Dockerize DB Application') {
+        stage('Dockerize DB Applications') {
             steps {
                 script {
                     SERVER_IPS.each { SERVER_IP ->
@@ -42,7 +42,7 @@ pipeline {
             }
         }
 
-        stage('Redeploy Container') {
+        stage('Redeploy Containers') {
             steps {
                 script {
                     SERVER_IPS.each { SERVER_IP ->
