@@ -1,0 +1,60 @@
+pipeline {
+    agent any
+
+    environment {
+        PROD_USERNAME = 'amedikusettor'
+        DOCKER_IMAGE_NAME = 'auth-db-deployment'
+        DOCKER_CONTAINER_NAME = 'auth-db'
+        DOCKER_CONTAINER_PORT = '6000'
+        DOCKER_HOST_PORT = '6000'
+        SERVER_IPS = ['35.202.82.185', '34.121.216.186']
+    }
+
+    stages {
+        stage('Load Code to Workspace') {
+            steps {
+                checkout scm
+            }
+        }
+
+        stage('Deploy Repo to Servers') {
+            steps {
+                script {
+                    SERVER_IPS.each { SERVER_IP ->
+                        sh "echo Packaging files for ${SERVER_IP} ..."
+                        sh 'tar -czf authdb_files.tar.gz *'
+                        sh "scp -o StrictHostKeyChecking=no authdb_files.tar.gz ${PROD_USERNAME}@${SERVER_IP}:/home/${PROD_USERNAME}/myflix/auth-db"
+                        sh "ssh -o StrictHostKeyChecking=no ${PROD_USERNAME}@${SERVER_IP} 'pwd && cd myflix/auth-db && tar -xzf authdb_files.tar.gz && ls -l'"
+                        sh 'echo Repo unloaded on ${SERVER_IP}. Preparing to dockerize application ..'
+                    }
+                }
+            }
+        }
+
+        stage('Dockerize DB Application') {
+            steps {
+                script {
+                    SERVER_IPS.each { SERVER_IP ->
+                        sh "ssh -o StrictHostKeyChecking=no ${PROD_USERNAME}@${SERVER_IP} 'cd myflix/auth-db && docker build -t ${DOCKER_IMAGE_NAME} .'"
+                        sh "echo Docker image for authDB on ${SERVER_IP} rebuilt. Preparing to redeploy container to web..."
+                    }
+                }
+            }
+        }
+
+        stage('Redeploy Container') {
+            steps {
+                script {
+                    SERVER_IPS.each { SERVER_IP ->
+                        sh "ssh -o StrictHostKeyChecking=no ${PROD_USERNAME}@${PROD_SERVER} 'cd myflix/auth-db && docker stop ${DOCKER_CONTAINER_NAME} || echo \"Failed to stop container\"'"
+                        sh "ssh -o StrictHostKeyChecking=no ${PROD_USERNAME}@${PROD_SERVER} 'cd myflix/auth-db && docker rm ${DOCKER_CONTAINER_NAME} || echo \"Failed to remove container\"'"
+                        sh "echo Container stopped and removed on ${SERVER_IP}. Preparing to redeploy new version"
+
+                        sh "ssh -o StrictHostKeyChecking=no ${PROD_USERNAME}@${SERVER_IP} 'cd myflix/auth-db && docker run -d -p ${DOCKER_HOST_PORT}:${DOCKER_CONTAINER_PORT} --name ${DOCKER_CONTAINER_NAME} ${DOCKER_IMAGE_NAME}'"
+                        sh "echo authDB Microservice Deployed on ${SERVER_IP}!"
+                    }
+                }
+            }
+        }
+    }
+}
