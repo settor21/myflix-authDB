@@ -3,7 +3,7 @@ pipeline {
 
     environment {
         PROD_USERNAME = 'amedikusettor'
-        PROD_SERVER = '34.121.116.117'
+        PROD_SERVER = '35.239.170.49'
         PROD_DIR = '/home/amedikusettor/myflix/auth-db'
         DOCKER_IMAGE_NAME = 'auth-db-deployment'
         DOCKER_CONTAINER_NAME = 'auth-db'
