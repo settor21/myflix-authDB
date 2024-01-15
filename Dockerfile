@@ -1,17 +1,14 @@
-# Use an official Python runtime as a parent image
-FROM python:3.9-slim
+# mongodb-docker/Dockerfile
+FROM mongo:latest
 
-# Set the working directory to /app
-WORKDIR /app
+# Set the working directory inside the container
+WORKDIR /usr/src/app
 
-# Copy the current directory contents into the container at /app
-COPY . /app
+# Create a directory for MongoDB data
+RUN mkdir -p /data/db
 
-# Install any needed packages specified in requirements.txt
-RUN pip install --no-cache-dir -r requirements.txt
+# Expose the MongoDB port
+EXPOSE 27017
 
-# Make port 6000 available to the world outside this container
-EXPOSE 6000
-
-# Run database.py when the container launches
-CMD ["python", "database.py"]
+# Start MongoDB
+CMD ["mongod"]
