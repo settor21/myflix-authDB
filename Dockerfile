@@ -1,14 +1,11 @@
-# mongodb-docker/Dockerfile
-FROM mongo:latest
+# Dockerfile.postgresql
+FROM postgres:latest
 
 # Set the working directory inside the container
 WORKDIR /usr/src/app
 
-# Create a directory for MongoDB data
-RUN mkdir -p /data/db
+# Expose the PostgreSQL port
+EXPOSE 5432
 
-# Expose the MongoDB port
-EXPOSE 27017
-
-# Start MongoDB
-CMD ["mongod"]
+# Copy the PostgreSQL initialization script
+COPY init.sql /docker-entrypoint-initdb.d/
