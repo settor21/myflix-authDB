@@ -11,11 +11,16 @@ COPY . /app
 RUN pip install --no-cache-dir -r requirements.txt
 
 # Install necessary Ubuntu packages
-RUN apt-get update && apt-get install -y \
-    libpq-dev
+# Install any needed packages specified in requirements.txt
+RUN apt-get update \
+    && apt-get install -y --no-install-recommends gcc \
+    && pip install --no-cache-dir -r requirements.txt \
+    && apt-get purge -y --auto-remove gcc \
+    && rm -rf /var/lib/apt/lists/*
 
 # Make port 6000 available to the world outside this container
 EXPOSE 6000
 
-# Run database.py when the container launches
-CMD ["gunicorn", "--workers=4", "--bind=0.0.0.0:6000", "app:app"]
+
+# Run Gunicorn when the container launches in production
+CMD ["gunicorn", "--bind", "0.0.0.0:5000", "app:app"]
