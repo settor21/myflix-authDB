@@ -50,7 +50,7 @@ pipeline {
                     echo 'Container stopped and removed. Preparing to redeploy new version'
 
                     // Run the MongoDB container
-                    sh "ssh -o StrictHostKeyChecking=no ${PROD_USERNAME}@${PROD_SERVER} 'cd mongodb && docker run -d -p ${DOCKER_HOST_PORT}:${DOCKER_CONTAINER_PORT} --name ${DOCKER_CONTAINER_NAME} ${DOCKER_IMAGE_NAME}'"
+                    sh "ssh -o StrictHostKeyChecking=no ${PROD_USERNAME}@${PROD_SERVER} 'cd mongodb && ./deploy-mongo.sh'"
                     echo 'MongoDB Microservice Deployed!'
                 }
             }
