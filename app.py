@@ -7,7 +7,7 @@ app = Flask(__name__)
 # PostgreSQL Configuration
 DB_HOST = '35.239.170.49'  # Replace with the IP address of your GCP VM
 DB_PORT = 5432
-DB_USER = 'amedikusettor'
+DB_USER = 'postgres'
 DB_PASSWORD = 'Skaq0084'
 DB_NAME = 'users'
 
