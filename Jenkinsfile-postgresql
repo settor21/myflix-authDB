@@ -50,7 +50,7 @@ pipeline {
                     echo 'Container stopped and removed. Preparing to redeploy new version'
 
                     // Run the PostgreSQL container
-                    sh "ssh -o StrictHostKeyChecking=no ${PROD_USERNAME}@${PROD_SERVER} 'cd postgresql && docker run -d -p ${DOCKER_HOST_PORT}:${DOCKER_CONTAINER_PORT} --name ${DOCKER_CONTAINER_NAME} -e POSTGRES_PASSWORD=Skaq0084 ${DOCKER_IMAGE_NAME}'"
+                    sh "ssh -o StrictHostKeyChecking=no ${PROD_USERNAME}@${PROD_SERVER} 'cd postgresql && ./deploy-postgres.sh'"
                     echo 'PostgreSQL Microservice Deployed!'
                 }
             }
