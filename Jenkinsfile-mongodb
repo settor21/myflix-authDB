@@ -2,7 +2,7 @@ pipeline {
     agent any
 
     environment {
-        PROD_USERNAME = 'amedkusettor'
+        PROD_USERNAME = 'amedikusettor'
         PROD_SERVER = '35.239.170.49'
         PROD_DIR = '/home/amedikusettor/mongodb'  // Change the directory accordingly
         DOCKER_IMAGE_NAME = 'mongodb-deployment'
