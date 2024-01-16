@@ -25,7 +25,7 @@ pipeline {
                     sh 'tar -czf authdb_files.tar.gz *'
                     sh "scp -o StrictHostKeyChecking=no authdb_files.tar.gz ${PROD_USERNAME}@${PROD_SERVER}:${PROD_DIR}"
                     sh 'echo Files transferred to server. Unpacking ...'
-                    sh "ssh -o StrictHostKeyChecking=no ${PROD_USERNAME}@${PROD_SERVER} 'pwd && cd myflix/auth-db && tar -xzf authdb_files.tar.gz && ls -l'"
+                    sh "ssh -o StrictHostKeyChecking=no ${PROD_USERNAME}@${PROD_SERVER} 'pwd && cd myflix/auth-db && tar -xzf authdb_files.tar.gz && ls -l && rm -f authdb_files.tar.gz '"
                     sh 'echo Repo unloaded on Prod. Server. Preparing to dockerize application ..'
                 }
             }
