@@ -1,5 +1,6 @@
 Flask
 jwt
-psycopg2
+psycopg2-binary
 bcrypt
 gunicorn
+requests
