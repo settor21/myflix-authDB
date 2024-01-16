@@ -1,4 +1,4 @@
 -- init.sql
 CREATE USER amedikusettor WITH PASSWORD 'admin';
-CREATE DATABASE myflix-access;
-GRANT ALL PRIVILEGES ON DATABASE myflix-access TO amedikusettor;
+CREATE DATABASE users;
+GRANT ALL PRIVILEGES ON DATABASE users TO amedikusettor;
