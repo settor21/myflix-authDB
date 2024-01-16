@@ -25,7 +25,7 @@ pipeline {
                     sh 'tar -czf postgresql.tar.gz *'
                     sh "scp -o StrictHostKeyChecking=no postgresql.tar.gz ${PROD_USERNAME}@${PROD_SERVER}:${PROD_DIR}"
                     sh 'echo Files transferred to server. Unpacking ...'
-                    sh "ssh -o StrictHostKeyChecking=no ${PROD_USERNAME}@${PROD_SERVER} 'pwd && mkdir postgresql || true && cd postgresql && tar -xzf postgresql.tar.gz && ls -l'"
+                    sh "ssh -o StrictHostKeyChecking=no ${PROD_USERNAME}@${PROD_SERVER} 'pwd && cd postgresql && tar -xzf postgresql.tar.gz && ls -l'"
                     sh 'echo Repo unloaded on Prod. Server. Preparing to dockerize application ..'
                 }
             }
