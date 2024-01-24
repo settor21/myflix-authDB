@@ -11,17 +11,15 @@ while true; do
     if (( $(echo "$CURRENT_LOAD > $LOAD_THRESHOLD" | bc -l) )); then
         # Server load is high, take action (e.g., deploy GCP container)
         echo "Server load is high ($CURRENT_LOAD), taking action..."
-        
-        # Add your GCP container deployment logic here
-        
-        # Example: Spin a new GCP container with 100GB space
+                
+        #Spin  GCP container with 100GB space
         gcloud compute instances create new-instance --image-family=ubuntu-1804-lts --image-project=ubuntu-os-cloud --boot-disk-size=100GB
         
-        # Example: Deploy Kubernetes cluster as prod-4
+        # Deploy Kubernetes cluster as prod-4
         gcloud container clusters create prod-4 --num-nodes=3 --machine-type=n1-standard-2
         
         echo "Action completed. Sleeping for 1 hour..."
-        sleep 1h
+        sleep 20m
     else
         echo "Server load is within the threshold ($CURRENT_LOAD). Sleeping for 10 minutes..."
         sleep 10m
