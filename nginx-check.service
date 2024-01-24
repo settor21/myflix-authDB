@@ -1,0 +1,12 @@
+[Unit]
+Description=NGINX Load Balancing Check Service
+After=network.target
+
+[Service]
+ExecStart=/path/to/nginx-check.sh
+Restart=always
+User=your_user
+Group=your_group
+
+[Install]
+WantedBy=multi-user.target
