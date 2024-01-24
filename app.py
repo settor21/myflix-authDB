@@ -9,7 +9,7 @@ DB_HOST = '35.239.170.49'  # Replace with the IP address of your GCP VM
 DB_PORT = 5432
 DB_USER = 'postgres'
 DB_PASSWORD = 'Skaq0084'
-DB_NAME = 'users'
+DB_NAME = 'myflix'
 
 # Establish connection to PostgreSQL
 
@@ -29,32 +29,37 @@ def create_tables():
                 first_name TEXT NOT NULL,
                 last_name TEXT NOT NULL,
                 email TEXT NOT NULL UNIQUE,
-                password TEXT NOT NULL
-            )
-        ''')
-
-        cursor.execute('''
-            CREATE TABLE IF NOT EXISTS subscriptions (
-                subscriptionId SERIAL PRIMARY KEY,
-                userId INTEGER,
-                paidSubscriber TEXT NOT NULL,
-                amount REAL NOT NULL,
-                FOREIGN KEY (userId) REFERENCES users (id)
+                password TEXT NOT NULL,
+                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
             )
         ''')
 
         cursor.execute('''
             CREATE TABLE IF NOT EXISTS sessions (
                 id SERIAL PRIMARY KEY,
-                user_id INTEGER,
-                session_id TEXT NOT NULL,
-                FOREIGN KEY (user_id) REFERENCES users (id)
+                userId INTEGER,
+                sessionId TEXT NOT NULL,
+                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                FOREIGN KEY (userId) REFERENCES users (id)
+            )
+        ''')
+        
+        cursor.execute('''
+            CREATE TABLE IF NOT EXISTS subscriptions (
+                id SERIAL PRIMARY KEY,
+                userId INTEGER,
+                tier TEXT NOT NULL,
+                status TEXT NOT NULL,
+                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                FOREIGN KEY (userId) REFERENCES users (id)
             )
         ''')
 
         connection.commit()
-
-
+        
 @app.route('/authenticate', methods=['POST'])
 def authenticate_user():
     data = request.json
@@ -159,6 +164,7 @@ def add_subscription():
     return jsonify({'message': 'Subscription added successfully'}), 200
 
 
+
 @app.route('/add_session', methods=['POST'])
 def add_session():
     data = request.json
@@ -180,6 +186,33 @@ def add_session():
         connection.commit()
 
     return jsonify({'message': 'Session added successfully'})
+
+
+@app.route('/check_tier', methods=['POST'])
+def check_tier():
+    data = request.json
+    user_id = data.get('user_id')
+
+    with psycopg2.connect(
+        host=DB_HOST,
+        port=DB_PORT,
+        user=DB_USER,
+        password=DB_PASSWORD,
+        database=DB_NAME
+    ) as connection:
+        cursor = connection.cursor()
+        cursor.execute('''
+            SELECT tier FROM subscriptions
+            WHERE userId = %s
+        ''', (user_id,))
+
+        result = cursor.fetchone()
+
+        if result:
+            tier = result[0]
+            return jsonify({'tier': tier})
+        else:
+            return jsonify({'tier': None})
 
 
 if __name__ == '__main__':
